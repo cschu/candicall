@@ -199,7 +199,9 @@ def main(argv):
         sys.stderr.write(str(e.reason) + '\n')
    
     if candiURL:
-        fo.write('<iframe src="%s"></iframe>\n' % candiURL)
+        body = urllib2.urlopen(candiURL)
+        fo.write(body.read())
+        #fo.write('<iframe src="%s"></iframe>\n' % candiURL)
     else:
         fo.write('I am sorry. CandiSNP does not pick up. Maybe (<a href="%s" target="_blank">try it manually?</a>)\n' % CANDISNP_SERVER)
      
