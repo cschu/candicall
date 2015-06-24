@@ -119,7 +119,8 @@ class AnnotatedSNPEffectFactory(object):
         self.alternate_base = args[4]
      
         # info = dict([field.split('=') for field in args[7].strip().split(';')])
-        info = dict(field.split('=') for field in args[7].strip().split(';'))
+        # info = dict(field.split('=') for field in args[7].strip().split(';'))
+        info = dict(field.split('=') for field in args[7].strip().split(';') if len(field.split('=')) == 2)
         # self.log.write('***'+str(info.get('EFF', '@@@')+'***\n'))
         
         self.allele_frequency = float(info.get('AF', '0.0'))
@@ -199,9 +200,12 @@ def main(argv):
         sys.stderr.write(str(e.reason) + '\n')
    
     if candiURL:
-        body = urllib2.urlopen(candiURL)
-        fo.write(body.read())
-        #fo.write('<iframe src="%s"></iframe>\n' % candiURL)
+        # body = urllib2.urlopen(candiURL)
+        # fo.write(body.read())
+        #fo.write('<iframe name="galaxy_main" id="galaxy_main" frameborder="0" style="position: absolute; width: 100%; height: 100%;" src="%s"></iframe>' % candiURL)
+        #fo.write('<iframe name="galaxy_main" id="galaxy_main" frameborder="0" style="position: absolute; width: 100%; height: 100%;" src="%s"></iframe>' % candiURL)     
+        fo.write('<iframe src="%s" frameborder="0" style="position: absolute; width: 100%%; height: 100%%;"></iframe>\n' % candiURL)
+        # fo.write('<iframe src="%s"></iframe>\n' % candiURL)
     else:
         fo.write('I am sorry. CandiSNP does not pick up. Maybe (<a href="%s" target="_blank">try it manually?</a>)\n' % CANDISNP_SERVER)
      
