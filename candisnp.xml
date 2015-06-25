@@ -2,6 +2,7 @@
 	<description></description>
 	<requirements>
 	  <requirement type="package" version="2.7.4">python</requirement>
+	  <requirement type="package" version="4.0">snpeff</requirement>
 	</requirements>
 	<command interpreter="python">candisnp.py 
 		#if $snpDb.genomeSrc == 'cached':
@@ -34,6 +35,6 @@
 	</outputs>
 
 	<help>
-	This tool is a testtool to issue POST requests from Galaxy.
+	A tool to pull in visualisation output from CandiSNP (candisnp.tsl.ac.uk).
 	</help>
 </tool>
