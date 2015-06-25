@@ -73,7 +73,7 @@ class SNPEffect(object):
         self.genotypeNumber = int(genotypeNumber)
         self.warning = warning if warning else None
 
-        self.is_synonymous = not self.effect == 'NON_SYNONYMOUS_CODING'
+        self.is_synonymous = self.effect != 'NON_SYNONYMOUS_CODING'
         if self.effect in ('INTRON', 'INTERGENIC'):
             self.in_cds, self.is_synonymous = False, False
         else:
@@ -120,7 +120,11 @@ class AnnotatedSNPEffectFactory(object):
      
         # info = dict([field.split('=') for field in args[7].strip().split(';')])
         # info = dict(field.split('=') for field in args[7].strip().split(';'))
-        info = dict(field.split('=') for field in args[7].strip().split(';') if len(field.split('=')) == 2)
+        try:
+            info = dict(field.split('=') for field in args[7].strip().split(';') if len(field.split('=')) == 2)
+        except:
+            sys.stderr.write('Found a problem in your input data. Please make sure it is a VCF produced by SnpEff.\n')
+            sys.exit(1)
         # self.log.write('***'+str(info.get('EFF', '@@@')+'***\n'))
         
         self.allele_frequency = float(info.get('AF', '0.0'))
@@ -147,8 +151,11 @@ def extractCandiDataFromSnpEffVCF(snpEffVCF, fo):
     for line in snpEffVCF:
         if not line.startswith('#'):
             #fo.write(line)
-            asf = AnnotatedSNPEffectFactory(*line.strip().split('\t'), log=fo)
-            snpEffects = list(asf.getEffects())                        
+            try:
+                asf = AnnotatedSNPEffectFactory(*line.strip().split('\t'), log=fo)
+                snpEffects = list(asf.getEffects())                        
+            except:
+                continue
             #fo.write(str(snpEffects)+'\n')
             snps.extend(snpEffects)
     return snps
@@ -186,10 +193,13 @@ def main(argv):
     """
     candiData = extractCandiDataFromSnpEffVCF(open(args.snpEff_output), fo)
     candiMessage = json.dumps({'ref': args.ref, 'data': candiData})
-
-    request = urllib2.Request(CANDISNP_SERVER + ':8080', 
-                              headers=contentHeaders,
-                              data=candiMessage)
+    
+    try:
+        request = urllib2.Request(CANDISNP_SERVER + ':8080', 
+                                  headers=contentHeaders,
+                                  data=candiMessage)
+    except:
+        sys.stderr.write('There was a problem with your request. Sorry.\n')  
 
 
     try:
